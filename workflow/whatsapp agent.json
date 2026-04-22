@@ -1,0 +1,378 @@
+{
+  "name": "whatsapp agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -528,
+        192
+      ],
+      "id": "98278497-3130-47a7-9db8-4f169de843ae",
+      "name": "When chat message received",
+      "webhookId": "0c03b60a-6ad7-4e60-9846-3d75ff3003ad"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful WhatsApp AI assistant for Hirash E-commerce.\n\nYour role:\n- Help users find clothes (kurti, dresses, etc.)\n- Provide product details from Google Sheets\n- Suggest products based on user preference\n- Answer FAQs (delivery, COD, returns)\n- Handle complaints politely\n- Store user intent (buying, inquiry, complaint)\n\nRules:\n- Always respond in simple, friendly tone\n- If product found → show:\n  Name, Price, Discount, Sizes, Colors, Description\n- If not found → suggest similar products\n- If complaint → apologize and confirm it is recorded\n- Never make up data (only use sheet data)\n\nImportant:\n- If user asks for product → search Products sheet\n- If general question → search QNA sheet\n- If complaint → log it in User Logs"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        304,
+        -64
+      ],
+      "id": "1be59890-9a2e-418c-8809-a2160b67f8ae",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        272,
+        112
+      ],
+      "id": "f8c6d6cc-2ece-4d8c-b9a0-e1974bccaab5",
+      "name": "Google Gemini Chat Model",
+      "notesInFlow": false,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "8Ph7AuN4QdWCFFMy",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        240
+      ],
+      "id": "64c56797-d76f-434c-b086-6babdfab08f5",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1xwCjonAHwc_2zCf2L2c-q2PIiU4bYnmrrtRKQOniJv8",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xwCjonAHwc_2zCf2L2c-q2PIiU4bYnmrrtRKQOniJv8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        304
+      ],
+      "id": "4ad18277-db50-4b98-808a-d863c321a6a2",
+      "name": "Products",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7RCsqJWvY19kK70o",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1xwCjonAHwc_2zCf2L2c-q2PIiU4bYnmrrtRKQOniJv8",
+          "mode": "list",
+          "cachedResultName": "course",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xwCjonAHwc_2zCf2L2c-q2PIiU4bYnmrrtRKQOniJv8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 670793416,
+          "mode": "list",
+          "cachedResultName": "FAQs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xwCjonAHwc_2zCf2L2c-q2PIiU4bYnmrrtRKQOniJv8/edit#gid=670793416"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        112
+      ],
+      "id": "379860f1-5562-48df-aac8-48b3df2bfcfb",
+      "name": "FAQs",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7RCsqJWvY19kK70o",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1079598101899502",
+        "recipientPhoneNumber": "919313163335",
+        "textBody": "🔥 New Arrival Alert!  🌸 Floral Summer Kurti   💰 ₹999 (20% OFF)   📏 Sizes: S, M, L    🛍️ Limited stock! Order now.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        1952,
+        80
+      ],
+      "id": "fbe2247b-751f-40c5-affa-100f6656ffe1",
+      "name": "Send message",
+      "webhookId": "d05366a6-e350-4aea-86ab-0934782b728e",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "ibCtUmoRHSPB7tcN",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -64
+      ],
+      "id": "fff986a1-c779-44a3-b7d9-73f72c52a799",
+      "name": "WhatsApp Trigger",
+      "webhookId": "2f87a116-296c-4419-a24b-849adcb5b7e0",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "IpOq7qpQvQeHlGZX",
+          "name": "WhatsApp OAuth account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1079598101899502",
+        "recipientPhoneNumber": "919313163335",
+        "textBody": "demo ",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        912,
+        -64
+      ],
+      "id": "6e1ca039-79d8-4753-a636-fc585ba0bca9",
+      "name": "Send message1",
+      "webhookId": "de91f1e9-52b4-4870-93e3-4fe9711b3498",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "se6jqL49As6uXly6",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## WhatsApp Trigger  \n**- Receives incoming user messages from WhatsApp\n- Requires:\n  • Valid webhook URL (Production URL)\n  • Correct verify token (must match Meta)\n  • Active workflow (IMPORTANT)\n\n",
+        "height": 336,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -544,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "22c9e806-9e8c-48bc-94e6-0a39e2809c17",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "##  AI Agent\n**- Processes user message\n- Uses:\n  • Chat Model (Google Gemini)\n  • Memory (Simple Memory for context)\n  • Tools:\n      - Products (Google Sheet)\n      - FAQs (Google Sheet)\n\n- Input:\n  {{ $json[\"text\"] || $json[\"message\"] }}\n\n- Output:\n  Smart reply based on products + FAQs\n\n---\n\nSTEP 3: Send Message\n- Sends response back to user on WhatsApp\n- Uses WhatsApp Cloud API\n- Requires:\n  • Phone Number ID\n  • Access Token\n  • Correct recipient number\n\n---\n\n⚠️ IMPORTANT CHECKS\n\n1. Webhook must be LIVE\n   → Use Production URL (NOT test URL)\n\n2. Workflow must be ACTIVE\n   → Otherwise Meta cannot verify\n\n3. Verify Token must MATCH\n   → Same in Meta & n8n\n\n4. ngrok must be RUNNING\n   → URL should not change\n\n5. Meta App does NOT need to be published (for testing)\n   → Just use test number\n\n---\n\n🚨 COMMON ERRORS\n\n❌ \"Callback URL couldn't be validated\"\n→ Webhook not active OR wrong URL\n\n❌ \"Bad request\"\n→ Wrong credentials OR token mismatch\n\n❌ \"Node unexecuted\"\n→ Nodes not connected properly\n\n---",
+        "height": 848,
+        "width": 864
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "6a5f6495-e7c7-424e-8dad-c1bd8539f879",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Send Messange \n** send messange to  the user",
+        "height": 368,
+        "width": 368
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        800,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "072d970c-7654-4c57-8ae8-398dc6a4dffb",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1xwCjonAHwc_2zCf2L2c-q2PIiU4bYnmrrtRKQOniJv8",
+          "mode": "list",
+          "cachedResultName": "course",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xwCjonAHwc_2zCf2L2c-q2PIiU4bYnmrrtRKQOniJv8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2126847429,
+          "mode": "list",
+          "cachedResultName": "User_Logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xwCjonAHwc_2zCf2L2c-q2PIiU4bYnmrrtRKQOniJv8/edit#gid=2126847429"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        400
+      ],
+      "id": "bf40f4d1-b03d-4700-aedd-a4199e6be639",
+      "name": "User_Logs",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7RCsqJWvY19kK70o",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Products": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User_Logs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1c78668a-2a9d-4f43-bf3e-831f8483f42a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bd3bf553a4f3a98eb0ed61a2fcd75ee1039a39b8aaa9adc4208a9c4e2d21a811"
+  },
+  "id": "R6sdoBFYnqjK1aQH",
+  "tags": []
+}
